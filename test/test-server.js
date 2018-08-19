@@ -13,6 +13,76 @@ const expect = chai.expect;
 // see: https://github.com/chaijs/chai-http
 chai.use(chaiHttp);
 
+describe('Recipes', function(){
+
+
+
+  before(function(){
+    return runServer;
+  });
+
+  after(function(){
+    return closeServer;
+  });
+
+
+  it('should provide a standard GET response', function(){
+    return chai.request(app).get('/recipes').then(
+      function(res){
+        expect(res.status === 200).to.be.true;
+        expect(res).to.be.json;
+        const expectedKeys = ['name', 'ingredients', 'id'];
+        res.body.forEach(
+          (item) => {
+          expect(item).to.include.keys(expectedKeys);
+        })
+
+      }
+    )
+  });
+
+
+  it('should provide a standard POST response', function(){
+
+   const spaghetti = {"name": "spaghetti", "ingredients": "spaghetti, tomato sauce, meatballs"};
+    return chai.request(app).post('/recipes').send(spaghetti).then(function(res){
+        expect(res.status === 201).to.be.true;
+        expect(res).to.be.json;
+        expect(res.body).to.include.keys("name", "ingredients", "id");
+    })
+  })
+
+
+
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 describe("Shopping List", function() {
   // Before our tests run, we activate the server. Our `runServer`
   // function returns a promise, and we return the that promise by
@@ -61,7 +131,7 @@ describe("Shopping List", function() {
       });
   });
 
-  // test strategy:
+  // t est strategy:
   //  1. make a POST request with data for a new item
   //  2. inspect response object and prove it has right
   //  status code and that the returned object has an `id`
